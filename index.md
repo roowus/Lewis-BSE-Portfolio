@@ -1,17 +1,12 @@
-# Project Name Here
-Replace this text with a brief description (2-3 sentences) of your project. This description should draw the reader in and make them interested in what you've built. You can include what the biggest challenges, takeaways, and triumphs from completing the project were. As you complete your portfolio, remember your audience is less familiar than you are with all that your project entails!
+# Smart Glasses
 
-You should comment out all portions of your portfolio that you have not completed yet, as well as any instructions:
-```HTML 
-<!--- This is an HTML comment in Markdown -->
-<!--- Anything between these symbols will not render on the published site -->
-```
+My Smart Glasses project is an AI-powered wearable device that provides real-time object identification and audio feedback. Using a Raspberry Pi with a camera module and TensorFlow-based object detection, the system announces detected objects through an earpiece, giving users information about their surroundings. This project challenged me to integrate hardware components, troubleshoot connectivity issues, and optimize machine learning models for edge computing.
 
 | **Engineer** | **School** | **Area of Interest** | **Grade** |
 |:--:|:--:|:--:|:--:|
 | Lewis H | Los Altos High School | Artificial Intelligence | Incoming Junior
 
-**Replace the BlueStamp logo below with an image of yourself and your completed project. Follow the guide [here](https://tomcam.github.io/least-github-pages/adding-images-github-pages-site.html) if you need help.**
+**Image of me with my completed Smart Glasses project**
 
 ![Headstone Image](logo.svg)
   
@@ -47,11 +42,20 @@ For your second milestone, explain what you've worked on since your previous mil
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/CaCazFBhYKs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-For your first milestone, describe what your project is and how you plan to build it. You can include:
-- An explanation about the different components of your project and how they will all integrate together
-- Technical progress you've made so far
-- Challenges you're facing and solving in your future milestones
-- What your plan is to complete your project
+My Smart Glasses project is an AI-powered wearable device that provides real-time object identification and audio feedback. The system consists of a Raspberry Pi connected to a camera module and an earpiece, running TensorFlow-based object detection with text-to-speech output.
+
+**Technical Progress Made:**
+- Set up and configured Raspberry Pi with SSH/VNC remote access
+- Integrated camera module with the Raspberry Pi after troubleshooting connection issues
+- Implemented TensorFlow object detection code that identifies objects and announces them via TTS
+- Connected powerbank for portable power and configured code to run on boot
+- Optimized detection confidence values for improved accuracy and speed
+
+**Challenges Faced:**
+The main challenge was getting the camera to work with the Raspberry Pi. Initially, the camera wouldn't connect properly, which required troubleshooting dependency issues and ultimately flashing a new SD card with an updated OS to resolve compatibility problems.
+
+**Plan to Complete:**
+For my next milestone, I need to assemble all components onto the glasses frame with proper wire management, mount the Raspberry Pi securely, and test the system in real-world scenarios. Future enhancements may include 3D-printed enclosures, Bluetooth connectivity to a phone, and a transparent OLED display for visual information.
 
 # Schematics 
 Here's where you'll put images of your schematics. [Tinkercad](https://www.tinkercad.com/blog/official-guide-to-tinkercad-circuits) and [Fritzing](https://fritzing.org/learning/) are both great resoruces to create professional schematic diagrams, though BSE recommends Tinkercad becuase it can be done easily and for free in the browser. 
