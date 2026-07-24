@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="420" viewBox="0 0 980 420" role="img" aria-label="Jarbis voice assistant flow">
+  <defs>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+    </marker>
+    <filter id="shadow2" x="-5%" y="-5%" width="110%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+    <style>
+      .title { font: 700 22px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; fill: #0f172a; }
+      .label { font: 700 14px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; fill: #0f172a; }
+      .small { font: 12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; fill: #334155; }
+      .edge { font: 600 12px -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif; fill: #1e293b; }
+      .box { stroke-width: 2; filter: url(#shadow2); }
+    </style>
+  </defs>
+
+  <rect width="980" height="420" fill="#f8fafc"/>
+  <text x="40" y="40" class="title">Jarbis Voice Loop</text>
+
+  <!-- Main flow -->
+  <rect x="40" y="90" width="150" height="70" rx="14" fill="#dbeafe" stroke="#2563eb" class="box"/>
+  <text x="115" y="120" text-anchor="middle" class="label">Listen</text>
+  <text x="115" y="140" text-anchor="middle" class="small">Pi mic + VAD</text>
+
+  <rect x="230" y="90" width="150" height="70" rx="14" fill="#dbeafe" stroke="#2563eb" class="box"/>
+  <text x="305" y="120" text-anchor="middle" class="label">Record</text>
+  <text x="305" y="140" text-anchor="middle" class="small">one utterance</text>
+
+  <rect x="420" y="90" width="150" height="70" rx="14" fill="#fef3c7" stroke="#d97706" class="box"/>
+  <text x="495" y="120" text-anchor="middle" class="label">Transcribe</text>
+  <text x="495" y="140" text-anchor="middle" class="small">faster-whisper</text>
+
+  <rect x="610" y="90" width="150" height="70" rx="14" fill="#dcfce7" stroke="#16a34a" class="box"/>
+  <text x="685" y="120" text-anchor="middle" class="label">Decide</text>
+  <text x="685" y="140" text-anchor="middle" class="small">command or chat?</text>
+
+  <rect x="800" y="90" width="140" height="70" rx="14" fill="#ede9fe" stroke="#7c3aed" class="box"/>
+  <text x="870" y="120" text-anchor="middle" class="label">Speak</text>
+  <text x="870" y="140" text-anchor="middle" class="small">TTS to earpiece</text>
+
+  <!-- Arrows top -->
+  <line x1="190" y1="125" x2="230" y2="125" stroke="#334155" stroke-width="2.5" marker-end="url(#arrow2)"/>
+  <line x1="380" y1="125" x2="420" y2="125" stroke="#334155" stroke-width="2.5" marker-end="url(#arrow2)"/>
+  <line x1="570" y1="125" x2="610" y2="125" stroke="#334155" stroke-width="2.5" marker-end="url(#arrow2)"/>
+  <line x1="760" y1="125" x2="800" y2="125" stroke="#334155" stroke-width="2.5" marker-end="url(#arrow2)"/>
+
+  <!-- Branch boxes -->
+  <rect x="420" y="230" width="200" height="80" rx="14" fill="#ffffff" stroke="#7c3aed" class="box"/>
+  <text x="520" y="262" text-anchor="middle" class="label">Voice command</text>
+  <text x="520" y="285" text-anchor="middle" class="small">photo / start / stop record</text>
+
+  <rect x="680" y="230" width="220" height="80" rx="14" fill="#ffffff" stroke="#16a34a" class="box"/>
+  <text x="790" y="262" text-anchor="middle" class="label">Vision chat</text>
+  <text x="790" y="285" text-anchor="middle" class="small">Ollama llava-phi3 + frame</text>
+
+  <!-- Branch lines -->
+  <path d="M 685 160 L 685 190 L 520 190 L 520 230" fill="none" stroke="#334155" stroke-width="2.5" marker-end="url(#arrow2)"/>
+  <path d="M 685 160 L 685 190 L 790 190 L 790 230" fill="none" stroke="#334155" stroke-width="2.5" marker-end="url(#arrow2)"/>
+  <text x="560" y="182" class="edge">KDE action</text>
+  <text x="800" y="182" class="edge">ask about scene</text>
+
+  <!-- Merge back -->
+  <path d="M 520 310 L 520 350 L 870 350 L 870 160" fill="none" stroke="#334155" stroke-width="2.5" marker-end="url(#arrow2)"/>
+  <path d="M 790 310 L 790 350" fill="none" stroke="#334155" stroke-width="2.5"/>
+  <text x="700" y="372" class="edge">reply audio streams back to Pi on UDP 5008</text>
+
+  <!-- Loop back -->
+  <path d="M 870 90 C 870 50 115 50 115 90" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow2)"/>
+  <text x="430" y="42" class="edge">repeat</text>
+
+  <text x="40" y="405" class="small">Barge-in is supported: talking over a reply can cancel TTS and start a new turn.</text>
+</svg>
