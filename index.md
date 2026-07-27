@@ -19,7 +19,7 @@ My Smart Glasses project is an AI-powered wearable assistant that lets me ask ab
 
 **Don't forget to replace the text below with the embedding for your milestone video. Go to Youtube, click Share -> Embed, and copy and paste the code to replace what's below.**
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/F7M7imOVGug" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/8Ru6fObYa5k" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 For my final milestone, I finished the full AI voice assistant loop (Jarbis) and my main modification: a custom CAD camera holder that mounts the OV5647 to the glasses. The Pi and powerbank ride in my pocket and connect to the glasses with a long flex cable. Live video (UDP 5004) and mic audio (UDP 5006) stream to a Mac; the Mac runs VAD, faster-whisper STT, Ollama `llava-phi3` vision chat, and macOS `say` TTS, then sends audio back to the Pi on UDP 5008. I can ask what the camera sees, interrupt replies (barge-in), and use voice commands to take a photo or record video and send it to my phone with KDE Connect.
 
@@ -41,7 +41,7 @@ At BSE I learned Raspberry Pi setup, networking/streaming, CAD in Onshape, speec
 
 **Don't forget to replace the text below with the embedding for your milestone video. Go to Youtube, click Share -> Embed, and copy and paste the code to replace what's below.**
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/y3VAmNlER5Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/FjdVhPEqN3U" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 Since my first milestone, I focused on turning the working Raspberry Pi system into a real wearable and connecting it to my phone and computer. I kept the Pi and powerbank off the frame (pocket carry) and used a longer flex cable so only the camera and audio gear sit on the glasses. I also started the mechanical mount work and the first streaming/connectivity layer that the final AI loop depends on.
 
@@ -63,7 +63,7 @@ For my final milestone, I need to finish a refined CAD camera holder, complete t
 
 **Don't forget to replace the text below with the embedding for your milestone video. Go to Youtube, click Share -> Embed, and copy and paste the code to replace what's below.**
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/CaCazFBhYKs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/kVgBthoMpxw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 My Smart Glasses project is an AI-powered wearable device that provides real-time object identification and audio feedback. The system consists of a Raspberry Pi connected to a camera module and an earpiece, running TensorFlow-based object detection with text-to-speech output.
 
@@ -117,7 +117,9 @@ Most of the final project code is a Mac-side coordinator in `pi-receiver` plus P
 4. Otherwise ask Ollama, optionally with the latest camera frame
 5. Speak the reply back through the earpiece, with barge-in if I talk over it
 
-### Pi sample: live camera + mic stream
+Not every file is pasted below, but these samples cover the main Pi and Mac paths used in the final build.
+
+### Pi sample 1: live camera + mic stream (`stream.sh`)
 
 This runs on the Raspberry Pi. The camera is mounted sideways, so the video is rotated before it is sent. The lav mic is captured at 48 kHz and downsampled to 16 kHz for speech recognition on the Mac.
 
@@ -137,9 +139,57 @@ ffmpeg -f s16le -ar 48000 -ac 1 -i - \
     "udp://${MAC_IP}:${AUDIO_PORT}?pkt_size=1316" &
 ```
 
-### Mac sample: one Jarbis turn
+### Pi sample 2: take photo and send to phone (`voice_cmds.sh`)
 
-This is the core of `receiver.py` on the Mac. It takes one spoken utterance, checks for photo/record commands, optionally attaches a fresh camera frame, asks the local vision model, and speaks the reply back to the Pi.
+When I say "take a photo," the Mac tells the Pi to pause the live stream, capture a still, rotate it, and share it to my phone with KDE Connect.
+
+```bash
+cmd_take_photo() {
+  pause_stream >/dev/null
+  raw="/tmp/pic_raw_$(date +%Y%m%d_%H%M%S).jpg"
+  file="/tmp/pic_$(date +%Y%m%d_%H%M%S).jpg"
+
+  # Camera is sideways, so capture tall then rotate to landscape
+  rpicam-still -n -o "$raw" --timeout 800 --width 1080 --height 1920 --quality 95
+  ffmpeg -y -loglevel error -i "$raw" -vf "transpose=2" -q:v 2 "$file"
+  kdeconnect-cli -d "$DEVICE_ID" --share "$file"
+
+  # Resume live stream unless a video recording is active
+  if [ ! -f /tmp/kde_video_rec.pid ]; then
+    resume_stream
+  fi
+  echo "OK photo sent to phone: $(basename "$file")"
+}
+```
+
+### Pi sample 3: record video, rotate, and share (`kde_video_rec.sh`)
+
+```bash
+if [ "$1" = "start" ]; then
+  VID_FILE="$VID_DIR/video_$(date +%Y%m%d_%H%M%S).h264"
+  nohup rpicam-vid -o "$VID_FILE" --timeout 0 --inline \
+      --width 720 --height 1280 --framerate 30 > "$LOG_FILE" 2>&1 &
+  echo "$!|$VID_FILE" > "$PID_FILE"
+  echo "Recording started"
+
+elif [ "$1" = "stop" ]; then
+  LINE=$(cat "$PID_FILE")
+  VID_PID=$(echo "$LINE" | cut -d'|' -f1)
+  VID_FILE=$(echo "$LINE" | cut -d'|' -f2)
+  kill "$VID_PID" 2>/dev/null
+  rm -f "$PID_FILE"
+
+  MP4_FILE="${VID_FILE%.h264}.mp4"
+  ffmpeg -y -i "$VID_FILE" -vf "transpose=2" \
+      -c:v libx264 -preset veryfast -crf 23 -an "$MP4_FILE"
+  kdeconnect-cli -d "$DEVICE_ID" --share "$MP4_FILE"
+  echo "Sent to phone"
+fi
+```
+
+### Mac sample 1: one Jarbis turn (`receiver.py`)
+
+This is the core Mac loop. It takes one spoken utterance, checks for photo/record commands, optionally attaches a fresh camera frame, asks the local vision model, and speaks the reply back to the Pi.
 
 ```python
 utt = self.collector.collect()  # VAD-gated utterance from Pi mic
@@ -164,6 +214,107 @@ reply = self.ai.process_text(
     system_prompt=self.system_prompt,  # Ollama llava-phi3
 )
 self.tts.speak(reply, stream_to_pi=True, cancel_check=self._barge_check)
+```
+
+### Mac sample 2: energy VAD (`vad.py`)
+
+This turns the continuous mic stream into one utterance by watching loudness over time.
+
+```python
+def feed(self, rms: float, now: float):
+    """Return 'speech_start', 'speech_end', or None."""
+    above = rms >= self.threshold
+
+    if self.state == self.SILENCE:
+        if above:
+            if self._above_since is None:
+                self._above_since = now
+            if (now - self._above_since) * 1000 >= self.speech_start_ms:
+                self.state = self.SPEAKING
+                return "speech_start"
+        else:
+            self._above_since = None
+    else:  # currently speaking
+        if not above:
+            if self._below_since is None:
+                self._below_since = now
+            if (now - self._below_since) * 1000 >= self.silence_ms:
+                self.state = self.SILENCE
+                return "speech_end"
+        else:
+            self._below_since = None
+    return None
+```
+
+### Mac sample 3: local vision chat (`ai_processor.py`)
+
+```python
+def process_text(self, prompt, image=None, system_prompt=None):
+    img_b64 = self._encode_image_b64(image) if image is not None else ""
+
+    messages = [{"role": "system", "content": system_prompt or (
+        "You are a snappy voice assistant named Jarbis."
+    )}]
+    messages.extend(self._clean_history(for_vision=bool(img_b64)))
+
+    user_msg = {"role": "user", "content": prompt.strip()}
+    if img_b64:
+        # Attach the current Pi camera frame for this turn only
+        user_msg["images"] = [img_b64]
+    messages.append(user_msg)
+
+    response = self.client.chat(
+        model=self.model,  # llava-phi3
+        messages=messages,
+        options={"num_predict": 100, "temperature": 0.3, "top_p": 0.9},
+    )
+    return response["message"]["content"].strip()
+```
+
+### Mac sample 4: speak reply back to the Pi (`tts_handler.py`)
+
+```python
+def speak(self, text, stream_to_pi=True, cancel_check=None):
+    output_file = Path(tempfile.gettempdir()) / "pi_response.aiff"
+
+    # macOS TTS -> AIFF
+    subprocess.run(["say", "-v", self.voice, "-o", str(output_file), text], check=True)
+
+    # Convert to raw 16 kHz mono PCM and stream over UDP 5008
+    proc = subprocess.run(
+        ["ffmpeg", "-loglevel", "error", "-i", str(output_file),
+         "-f", "s16le", "-ar", "16000", "-ac", "1", "-"],
+        capture_output=True,
+    )
+    return self._stream_pcm(proc.stdout, cancel_check=cancel_check)
+```
+
+### Mac sample 5: match voice commands (`kde_actions.py`)
+
+```python
+def match_intent(text: str):
+    t = (text or "").lower().strip()
+    patterns = {
+        "take_photo": [r"\btake (a )?photo\b", r"\btake (a )?picture\b"],
+        "start_recording": [r"\bstart recording\b", r"\brecord (a )?video\b"],
+        "stop_recording": [r"\bstop recording\b", r"\bsend (the )?video\b"],
+    }
+    for action, pats in patterns.items():
+        for pat in pats:
+            if re.search(pat, t):
+                return action
+    return None
+
+def run_pi_action(action: str, config=None):
+    host = config.get("PI_IP")
+    user = config.get("PI_SSH_USER")
+    remote = f"bash ~/pi-stream/voice_cmds.sh {action}"
+    proc = subprocess.run(
+        ["ssh", f"{user}@{host}", remote],
+        capture_output=True, text=True, timeout=120,
+    )
+    ok = proc.returncode == 0
+    return ActionResult(True, action, ok, "Done." if ok else "Something went wrong.")
 ```
 
 # Bill of Materials
