@@ -13,11 +13,9 @@ My Smart Glasses project is an AI-powered wearable assistant that lets me ask ab
 
 **Image of me with my completed Smart Glasses project**
 
-![Headstone Image](logo.svg)
+![Lewis with completed Smart Glasses project](lewis-with-project.jpg)
   
 # Final Milestone
-
-**Don't forget to replace the text below with the embedding for your milestone video. Go to Youtube, click Share -> Embed, and copy and paste the code to replace what's below.**
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/8Ru6fObYa5k" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
@@ -39,8 +37,6 @@ At BSE I learned Raspberry Pi setup, networking/streaming, CAD in Onshape, speec
 
 # Second Milestone
 
-**Don't forget to replace the text below with the embedding for your milestone video. Go to Youtube, click Share -> Embed, and copy and paste the code to replace what's below.**
-
 <iframe width="560" height="315" src="https://www.youtube.com/embed/FjdVhPEqN3U" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 Since my first milestone, I focused on turning the working Raspberry Pi system into a real wearable and connecting it to my phone and computer. I kept the Pi and powerbank off the frame (pocket carry) and used a longer flex cable so only the camera and audio gear sit on the glasses. I also started the mechanical mount work and the first streaming/connectivity layer that the final AI loop depends on.
@@ -60,8 +56,6 @@ The main challenge was wireless communication. I originally planned on Bluetooth
 For my final milestone, I need to finish a refined CAD camera holder, complete the Mac-side AI pipeline (vision model + speech), add working mic input, improve TTS quality back to the Pi, and fully integrate the streams so I can talk to the glasses and get spoken answers about what the camera sees.
 
 # First Milestone
-
-**Don't forget to replace the text below with the embedding for your milestone video. Go to Youtube, click Share -> Embed, and copy and paste the code to replace what's below.**
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/kVgBthoMpxw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
@@ -332,10 +326,3 @@ def run_pi_action(action: str, config=None):
 | MicroSD card | Pi OS + project scripts (`pi-stream`, KDE runcommands) | ~$10-15 | <a href="https://www.amazon.com/s?k=microsd+card"> Link </a> |
 | Mac (existing) | Runs Jarbis: Whisper STT, Ollama `llava-phi3`, TTS, coordination | n/a | Existing computer |
 
-# Other Resources/Examples
-One of the best parts about Github is that you can view how other people set up their own work. Here are some past BSE portfolios that are awesome examples. You can view how they set up their portfolio, and you can view their index.md files to understand how they implemented different portfolio components.
-- [Example 1](https://trashytuber.github.io/YimingJiaBlueStamp/)
-- [Example 2](https://sviatil0.github.io/Sviatoslav_BSE/)
-- [Example 3](https://arneshkumar.github.io/arneshbluestamp/)
-
-To watch the BSE tutorial on how to create a portfolio, click here.
